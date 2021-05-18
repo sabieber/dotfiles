@@ -1,6 +1,6 @@
 # ALIASES
 
-alias ls='ls -la'
+alias ls='ls -lac'
 alias f='open -a Finder ./'
 alias edit='code'
 
@@ -29,6 +29,12 @@ alias h='history 1 | grep'
 
 alias xsh='ssh -l root'
 alias osh='ssh -l root -L 9205:10.100.107.107:9200 -L 3390:10.100.107.204:3389 oxomi.com'
+
+alias j13="export JAVA_HOME=`/usr/libexec/java_home -v 13`; java -version"
+alias j9="export JAVA_HOME=`/usr/libexec/java_home -v 9`; java -version"
+alias j8="export JAVA_HOME=`/usr/libexec/java_home -v 1.8`; java -version"
+
+alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 
 # PATH
 
@@ -80,14 +86,27 @@ POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=0
 
 POWERLEVEL9K_MODE='nerdfont-complete'
-ZSH_THEME='powerlevel9k/powerlevel9k'
-source  ~/dev/powerlevel9k/powerlevel9k.zsh-theme
+ZSH_THEME='powerlevel10k/powerlevel10k'
+source  ~/dev/powerlevel10k/powerlevel10k.zsh-theme
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fpath=(/usr/local/share/zsh-completions $fpath)
 
-HISTSIZE=1000
-SAVEHIST=1000
+# Configure history
+HISTSIZE=10000
+SAVEHIST=10000
 HISTFILE=~/.zhistory
+
+# Enable colors for promt
+autoload -U colors && colors
+PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%}%% "
+
+# Initialize the autocompletion
+autoload -Uz compinit && compinit -i
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+# Include hidden files
+_comp_options+=(globdots)
 
 # Highlight the current autocomplete option
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -101,5 +120,19 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
   '+l:|?=** r:|?=**'
 
-# Initialize the autocompletion
-autoload -Uz compinit && compinit -i
+# Allow ls to switch directories (bound to ctrl+o)
+lfcd () {
+    tmp="$(mktemp)"
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
+}
+bindkey -s '^o' 'lfcd\n'
+
+# Load powerlevel
+source ~/dev/powerlevel10k/powerlevel10k.zsh-theme
+# Load syntax highlighting
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
