@@ -6,24 +6,26 @@
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [user]
 	name = Sascha Bieberstein
 	email = sbi@scireum.de
 [filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
 	required = true
+	process = git-lfs filter-process
 [alias]
-	lol = log --graph --decorate --pretty=oneline --abbrev-commit
-	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
-	cleanup = !git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d && git remote | xargs -n 1 git remote prune
-	update = !git fetch origin master && git merge origin/master
-	feature = "!f() { git checkout master && git pull && git branch sbi/$1 && git checkout sbi/$1; }; f"
+	cleanup = !git branch --merged | grep  -v '\\*\\|develop|master' | xargs -n 1 git branch -d && git remote | xargs -n 1 git remote prune
+	update = !git fetch origin develop && git merge origin/develop
+	feature = "!f() { git checkout develop && git pull && git branch feature/sbi/$1 && git checkout feature/sbi/$1; }; f"
 	st = status -s
 	cl = clone
 	ci = commit
 	co = checkout
 	br = branch
 	sync = !git fetch upstream && git checkout master && git merge upstream/master
+	tags = !git tag -l --sort=-creatordate --format='%(creatordate:short)|%(refname:short)'
+[maintenance]
+	repo = /Users/sbi/dev/oxomi
