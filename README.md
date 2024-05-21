@@ -29,5 +29,6 @@ This will [link](https://wiki.archlinux.de/title/Ln) the appropriate files in `.
 Currently the following tools are configured:
 
 * [kitty](https://github.com/kovidgoyal/kitty) - Cross-platform terminal emulator
+* [starship](https://starship.rs/) - Customizable and fast prompt
 * [WezTerm](https://wezfurlong.org/wezterm/index.html) - Cross-platform terminal emulator
 * [git](https://git-scm.com/) - Including some helpful aliases for working with git-flow
